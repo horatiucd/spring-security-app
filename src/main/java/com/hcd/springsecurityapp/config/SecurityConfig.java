@@ -1,5 +1,7 @@
 package com.hcd.springsecurityapp.config;
 
+import com.hcd.springsecurityapp.listener.CustomHttpSessionListener;
+import jakarta.servlet.ServletContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,10 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.web.context.ServletContextAware;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig implements ServletContextAware {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,4 +61,8 @@ public class SecurityConfig {
         return new HttpSessionEventPublisher();
     }
 
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        servletContext.addListener(new CustomHttpSessionListener());
+    }
 }
