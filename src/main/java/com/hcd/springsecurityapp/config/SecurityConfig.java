@@ -1,11 +1,10 @@
 package com.hcd.springsecurityapp.config;
 
-import com.hcd.springsecurityapp.listener.CustomHttpSessionListener;
-import jakarta.servlet.ServletContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,15 +13,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-import org.springframework.web.context.ServletContextAware;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig implements ServletContextAware {
+public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .headers(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequestsCustomizer ->
                         authorizeHttpRequestsCustomizer.requestMatchers("/").permitAll()
                                 .anyRequest().authenticated())
@@ -41,6 +40,11 @@ public class SecurityConfig implements ServletContextAware {
     }
 
     @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
@@ -54,15 +58,5 @@ public class SecurityConfig implements ServletContextAware {
                 .build();
 
         return new InMemoryUserDetailsManager(user);
-    }
-
-    @Bean
-    public HttpSessionEventPublisher httpSessionEventPublisher() {
-        return new HttpSessionEventPublisher();
-    }
-
-    @Override
-    public void setServletContext(ServletContext servletContext) {
-        servletContext.addListener(new CustomHttpSessionListener());
     }
 }

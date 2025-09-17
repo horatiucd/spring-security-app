@@ -4,6 +4,11 @@
 <head>
     <title>Home</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:src="@{/app.js}"></script>
 </head>
 <body>
     <div th:inline="text"><span th:remove="tag" sec:authentication="name"></span>, welcome!</div>
@@ -11,6 +16,13 @@
         <form th:action="@{/logout}" method="post">
             <div>
                 <button type="submit">Sign Out</button>
+            </div>
+        </form>
+    </div>
+    <div>
+        <form>
+            <div>
+                <button id="send-private" type="button" >Send Private</button>
             </div>
         </form>
     </div>
