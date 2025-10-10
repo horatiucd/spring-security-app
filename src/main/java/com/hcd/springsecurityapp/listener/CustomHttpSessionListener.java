@@ -24,14 +24,11 @@ public record CustomHttpSessionListener(WebSocketService webSocketService) imple
     public void sessionDestroyed(HttpSessionEvent event) {
         SecurityContext securityContext = (SecurityContext) event.getSession()
                 .getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-        if (securityContext != null &&
-                securityContext.getAuthentication() != null) {
+        if (securityContext != null && securityContext.getAuthentication() != null) {
             Authentication auth = securityContext.getAuthentication();
             String user = auth.getName();
-            if (auth.isAuthenticated() &&
-                    !"anonymousUser".equals(user)) {
-                log.info("Notify {} the session expired.", user);
-
+            if (auth.isAuthenticated() && !"anonymousUser".equals(user)) {
+                log.info("User's {} session expired.", user);
                 webSocketService.notifyUser(user, "Session expired");
             }
         }
